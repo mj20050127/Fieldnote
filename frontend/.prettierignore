@@ -1,0 +1,6 @@
+src/api.generated.ts
+openapi.json
+package-lock.json
+dist
+test-results
+playwright-report

@@ -90,7 +90,7 @@ docker compose ps
 
 ## 文档
 
-- [第一阶段项目完成报告 PDF](output/pdf/Fieldnote_第一阶段项目完成报告.pdf)
+- [第一阶段项目完成报告 PDF](output/pdf/Fieldnote_第一阶段项目完成报告_修订版.pdf)
 - [系统与数据库设计](docs/DESIGN.md)
 - [API 说明](docs/API.md)
 - [测试步骤与实际结果](docs/TEST_REPORT.md)

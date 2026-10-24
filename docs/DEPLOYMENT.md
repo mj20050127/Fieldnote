@@ -8,6 +8,8 @@
 
 ## 当前验证范围
 
+第二阶段首次远程检查发现 ubuntu-latest 已更新至 Ubuntu 26.04.1，mongo:8.0 在容器启动阶段报 SERVER-121912。CI 因而固定 Ubuntu 24.04。MongoDB 容器共享宿主内核，实际服务器或 Docker Desktop 也应核对内核与当前 MongoDB 的兼容性，不能只看容器内部发行版。依据：[MongoDB 8.0 官方发行说明](https://www.mongodb.com/docs/manual/release-notes/8.0/)。本次没有绕过 MongoDB 的启动检查。
+
 Windows 原生 MongoDB、独立 Python 虚拟环境、生产前端构建、本地服务及 Chromium 流程已实际验证。Compose 已通过配置解析；当前机器 Docker 引擎未运行，因此镜像构建、容器启动、云端 DNS、证书与远程重启恢复尚待部署环境验证。GitHub Actions 是提供的配置，还没有远程仓库运行记录。
 
 ## 云端上线步骤

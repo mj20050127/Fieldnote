@@ -1,0 +1,12 @@
+{
+  "backend_tests": 75,
+  "backend_failures": 0,
+  "backend_errors": 0,
+  "browser_tests_passed": 8,
+  "frontend_typecheck_and_build": "passed",
+  "openapi_types_generation": "passed",
+  "desktop_mobile_layout_checks_passed": 6,
+  "pdf_pages": 5,
+  "pdf_text_color": "black only",
+  "public_deployment": "not performed"
+}

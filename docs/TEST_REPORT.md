@@ -113,7 +113,7 @@ npm.cmd run test:e2e
 
 - Compose 配置解析通过，但 Docker 引擎未启动，镜像构建与容器启动尚未实测。
 - 未购买服务器或域名，公网、TLS、云主机重启和云端备份恢复未验收。
-- GitHub Actions 尚无远程运行记录。
+- 第一阶段未运行远程 CI；第二阶段的远程结果见下文。
 - 多实例限流与跨集合线性化关闭未验证；第二阶段迁移结果见下文。
 
 ## 第二阶段验收（2026-10-24）
@@ -130,4 +130,6 @@ npm.cmd run test:e2e
 
 Windows 受限沙箱对 pytest 临时目录的 ACL 拒绝访问，恢复测试在正常用户权限下通过。最终仅有上游 Starlette/AnyIO 的弃用提示；未把环境失败记录当成通过。基线与第二阶段结果分开保留。
 
-远程 GitHub Actions 的结果在提交后单独记录；本节测试数量为本机执行结果。公网、容器运行和多实例场景仍未验收。
+远程 GitHub Actions 已对实现提交 87e2ae1 执行通过：[运行 40063317235](https://github.com/mj20050127/Fieldnote/actions/runs/40063317235)。Ubuntu 24.04、MongoDB 8.0 容器、后端测试、契约漂移检查、前端构建和 Chromium 流程全部成功，独立证据保存在 evidence/stage2-ci.json。首次 8101827 的运行在 Ubuntu 26.04 容器初始化阶段因 MongoDB 已知内核问题失败，未计作代码测试；固定 runner 后重新通过。
+
+迁移后的正式 v2 备份也已恢复验收，users=6、surveys=9、responses=6、question_banks=6、questions=36、question_versions=36 数量一致，示例平均值 15 保持不变。远程通过使用 MongoDB 服务容器，不等于验证了项目生产 Compose；公网、生产镜像启动和多实例场景仍未验收。

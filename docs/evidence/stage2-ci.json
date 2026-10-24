@@ -1,0 +1,116 @@
+{
+  "run": {
+    "id": 40063317235,
+    "head_sha": "87e2ae1e4b3c2b4dead06c71af0041598bc98dd8",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/mj20050127/Fieldnote/actions/runs/40063317235"
+  },
+  "jobs": {
+    "name": "check",
+    "status": "completed",
+    "conclusion": "success",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Initialize containers",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-node@v4",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run pip install -r backend/requirements-dev.txt",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run python -m pytest backend/tests -q -p no:cacheprovider",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm ci",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run python scripts/export_openapi.py",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm --prefix frontend run generate:api",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run git diff --exit-code frontend/openapi.json frontend/src/api.generated.ts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm --prefix frontend run build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npx playwright install --with-deps chromium",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 > /tmp/fieldnote.log 2>&1 &",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "skipped"
+      },
+      {
+        "name": "Post Run actions/setup-node@v4",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/setup-python@v5",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Stop containers",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
+}

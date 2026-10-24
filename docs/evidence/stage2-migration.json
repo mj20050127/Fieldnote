@@ -1,0 +1,14 @@
+{
+  "source_format": 1,
+  "survey_count": 9,
+  "response_count": 6,
+  "linked_questions": 36,
+  "version_count_after_rerun": 36,
+  "skipped_incomplete": 0,
+  "snapshots_unchanged": true,
+  "response_documents_unchanged": true,
+  "statistics_unchanged": true,
+  "submission_replays_passed": 6,
+  "dry_run_no_writes": true,
+  "repeat_no_duplicates": true
+}

@@ -1,0 +1,35 @@
+{
+  "checks": [
+    {
+      "width": 1440,
+      "screen": "library",
+      "fits": true
+    },
+    {
+      "width": 1440,
+      "screen": "history",
+      "fits": true
+    },
+    {
+      "width": 1440,
+      "screen": "statistics",
+      "fits": true
+    },
+    {
+      "width": 390,
+      "screen": "library",
+      "fits": true
+    },
+    {
+      "width": 390,
+      "screen": "history",
+      "fits": true
+    },
+    {
+      "width": 390,
+      "screen": "statistics",
+      "fits": true
+    }
+  ],
+  "page_errors": []
+}

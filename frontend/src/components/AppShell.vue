@@ -24,6 +24,11 @@ async function logout() {
       <div class="workspace-label">个人工作空间</div>
       <nav>
         <RouterLink
+          to="/library"
+          :class="{ active: route.path.startsWith('/library') }"
+          ><Icon name="file" /> 题库</RouterLink
+        >
+        <RouterLink
           to="/dashboard"
           :class="{ active: route.path === '/dashboard' }"
           ><Icon name="grid" /> 我的问卷 <span class="nav-dot"
@@ -57,6 +62,10 @@ async function logout() {
         <span class="topbar-note"
           ><span class="live-dot" /> 让每一种声音被看见</span
         >
+        <nav class="mobile-workspace-nav" aria-label="工作空间导航">
+          <RouterLink to="/dashboard">问卷</RouterLink
+          ><RouterLink to="/library">题库</RouterLink>
+        </nav>
       </header>
       <main class="main-content"><slot /></main>
       <footer class="app-footer">

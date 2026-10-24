@@ -10,6 +10,11 @@ const router = createRouter({
   routes: [
     { path: "/", redirect: "/dashboard" },
     { path: "/login", component: () => import("./pages/AuthPage.vue") },
+    { path: "/library", component: () => import("./pages/LibraryPage.vue") },
+    {
+      path: "/library/questions/:id",
+      component: () => import("./pages/LibraryDetailPage.vue"),
+    },
     {
       path: "/dashboard",
       component: () => import("./pages/DashboardPage.vue"),

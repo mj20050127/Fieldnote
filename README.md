@@ -11,6 +11,23 @@
 - 移动端逐题填写、返回修改后清除旧路径、后端完整路径重放。
 - 请求幂等、并发防重复、匿名字段过滤、单题和整卷 MongoDB 聚合统计。
 - 原始答卷和文本数值回答分页、演示数据、备份恢复、Compose 部署和 CI 配置。
+- 第二阶段：独立题库、不可变题目版本、版本分支与恢复、按用户名共享、另存派生题目。
+- 问卷固定引用选定版本并保留完整快照；来源校验、草稿明确换版、本人跨问卷分版本统计。
+
+## 第二阶段使用与升级
+
+侧栏打开“题库”，新建题库和题目。在题目详情查看版本、共享、本人引用问卷及跨卷统计。问卷编辑器支持“从题库添加”“保存到题库”和“更换版本”；添加或换版后请保存草稿并检查跳转。共享接收者只能使用和另存，不能修改原作者的题。
+
+旧数据库升级必须先停止后端写入并备份，再在独立恢复库预演：
+
+```powershell
+.venv\Scripts\python.exe scripts/backup.py --output .local/backups/before-stage2
+.venv\Scripts\python.exe scripts/verify_stage2_migration.py .local/backups/before-stage2
+.venv\Scripts\python.exe scripts/migrate_stage2.py --dry-run
+.venv\Scripts\python.exe scripts/migrate_stage2.py --apply --maintenance --backup .local/backups/before-stage2
+```
+
+迁移可重跑与中断续跑，只补充题目来源、schema_version 和管理 revision，不改历史答案、分享码、路径或提交摘要。未完成题目留在原草稿并记录原因。失败时保持维护状态，从迁移前备份恢复到新的空库，再切换 MONGO_DATABASE；不要只回退代码。完整步骤见 [迁移说明](docs/STAGE2_MIGRATION.md)。新库可直接启动，不依赖副本集。
 
 ## Windows 快速启动
 
@@ -91,6 +108,9 @@ docker compose ps
 ## 文档
 
 - [第一阶段项目完成报告 PDF](output/pdf/Fieldnote_第一阶段项目完成报告_修订版.pdf)
+- [第二阶段项目完成报告 PDF](output/pdf/Fieldnote_第二阶段项目完成报告.pdf)
+- [第二阶段报告源文档](docs/STAGE2_REPORT.md)
+- [第二阶段迁移与验收](docs/STAGE2_MIGRATION.md)
 - [系统与数据库设计](docs/DESIGN.md)
 - [API 说明](docs/API.md)
 - [测试步骤与实际结果](docs/TEST_REPORT.md)

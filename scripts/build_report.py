@@ -46,10 +46,11 @@ def build(source, output, font):
     }
     output.parent.mkdir(parents=True, exist_ok=True)
     width = A4[0] - 124
-    doc = SimpleDocTemplate(str(output), pagesize=A4, rightMargin=62, leftMargin=62,
-                            topMargin=48, bottomMargin=47, title='拾问 Fieldnote 第一阶段项目完成报告',
-                            author='Fieldnote', subject='MongoDB 在线问卷系统课程项目完成报告')
     lines = source.read_text(encoding='utf-8-sig').splitlines()
+    title = next((line[2:].strip() for line in lines if line.startswith('# ')), '拾问 Fieldnote 项目完成报告')
+    doc = SimpleDocTemplate(str(output), pagesize=A4, rightMargin=62, leftMargin=62,
+                            topMargin=48, bottomMargin=47, title=title,
+                            author='Fieldnote', subject='MongoDB 在线问卷系统课程项目完成报告')
     story, index = [], 0
     while index < len(lines):
         line = lines[index].strip()

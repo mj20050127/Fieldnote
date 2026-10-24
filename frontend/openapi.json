@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Fieldnote 问卷 API",
-    "version": "1.0.0"
+    "version": "2.0.0"
   },
   "paths": {
     "/api/health": {
@@ -961,6 +961,990 @@
           }
         }
       }
+    },
+    "/api/question-banks": {
+      "get": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Banks",
+        "operationId": "banks_api_question_banks_get",
+        "parameters": [
+          {
+            "name": "archived",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Archived"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Create Bank",
+        "operationId": "create_bank_api_question_banks_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/question-banks/{bid}": {
+      "patch": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Update Bank",
+        "operationId": "update_bank_api_question_banks__bid__patch",
+        "parameters": [
+          {
+            "name": "bid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Bid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions": {
+      "get": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Questions",
+        "operationId": "questions_api_questions_get",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "mine",
+                "shared",
+                "used"
+              ],
+              "type": "string",
+              "default": "mine",
+              "title": "Scope"
+            }
+          },
+          {
+            "name": "bank_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Bank Id"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 200,
+              "default": "",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "single_choice",
+                    "multiple_choice",
+                    "text",
+                    "number"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "name": "archived",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Archived"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryQuestionList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Create Question",
+        "operationId": "create_question_api_questions_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryQuestionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}": {
+      "get": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Question",
+        "operationId": "question_api_questions__qid__get",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryQuestionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Update Question",
+        "operationId": "update_question_api_questions__qid__patch",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LibraryUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryQuestionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}/versions": {
+      "get": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Versions",
+        "operationId": "versions_api_questions__qid__versions_get",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Create Version",
+        "operationId": "create_version_api_questions__qid__versions_post",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}/versions/{vid}": {
+      "get": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Version",
+        "operationId": "version_api_questions__qid__versions__vid__get",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          },
+          {
+            "name": "vid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}/restore": {
+      "post": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Restore",
+        "operationId": "restore_api_questions__qid__restore_post",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}/fork": {
+      "post": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Fork",
+        "operationId": "fork_api_questions__qid__fork_post",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForkInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryQuestionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}/shares": {
+      "get": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Shares",
+        "operationId": "shares_api_questions__qid__shares_get",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharesOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Share",
+        "operationId": "share_api_questions__qid__shares_post",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharesOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}/shares/{uid}": {
+      "delete": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Revoke",
+        "operationId": "revoke_api_questions__qid__shares__uid__delete",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          },
+          {
+            "name": "uid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Uid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevisionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SharesOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}/usages": {
+      "get": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Usages",
+        "operationId": "usages_api_questions__qid__usages_get",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/questions/{qid}/statistics": {
+      "get": {
+        "tags": [
+          "question-library"
+        ],
+        "summary": "Cross Statistics",
+        "operationId": "cross_statistics_api_questions__qid__statistics_get",
+        "parameters": [
+          {
+            "name": "qid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Qid"
+            }
+          },
+          {
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version Id"
+            }
+          },
+          {
+            "name": "survey_ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "maxItems": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Survey Ids"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryStatistics"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1002,6 +1986,146 @@
           "submitted_at"
         ],
         "title": "AnswerValue"
+      },
+      "BankInput": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Description",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "BankInput"
+      },
+      "BankList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BankOut"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "BankList"
+      },
+      "BankOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Description",
+            "default": ""
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "archived": {
+            "type": "boolean",
+            "title": "Archived"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "description",
+          "id",
+          "archived",
+          "revision",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "BankOut"
+      },
+      "BankUpdate": {
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Expected Revision"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "archived": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_revision"
+        ],
+        "title": "BankUpdate"
       },
       "Credentials": {
         "properties": {
@@ -1208,6 +2332,35 @@
         ],
         "title": "EvaluateOut"
       },
+      "ForkInput": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{16,100}$",
+            "title": "Request Id"
+          },
+          "bank_id": {
+            "type": "string",
+            "title": "Bank Id"
+          },
+          "content": {
+            "$ref": "#/components/schemas/QuestionContent-Input"
+          },
+          "source_version_id": {
+            "type": "string",
+            "title": "Source Version Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request_id",
+          "bank_id",
+          "content",
+          "source_version_id"
+        ],
+        "title": "ForkInput"
+      },
       "FormOut": {
         "properties": {
           "title": {
@@ -1285,6 +2438,25 @@
         ],
         "title": "FormOut"
       },
+      "Frequency": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "count"
+        ],
+        "title": "Frequency"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1340,6 +2512,202 @@
           "field"
         ],
         "title": "Issue"
+      },
+      "LibraryCreate": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{16,100}$",
+            "title": "Request Id"
+          },
+          "bank_id": {
+            "type": "string",
+            "title": "Bank Id"
+          },
+          "content": {
+            "$ref": "#/components/schemas/QuestionContent-Input"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request_id",
+          "bank_id",
+          "content"
+        ],
+        "title": "LibraryCreate"
+      },
+      "LibraryQuestionList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryQuestionOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "LibraryQuestionList"
+      },
+      "LibraryQuestionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "owner_id": {
+            "type": "string",
+            "title": "Owner Id"
+          },
+          "owner_username": {
+            "type": "string",
+            "title": "Owner Username"
+          },
+          "bank_id": {
+            "type": "string",
+            "title": "Bank Id"
+          },
+          "archived": {
+            "type": "boolean",
+            "title": "Archived"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          },
+          "access": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "shared",
+              "historical"
+            ],
+            "title": "Access"
+          },
+          "available_for_reuse": {
+            "type": "boolean",
+            "title": "Available For Reuse"
+          },
+          "derived_from": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuestionSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latest_version": {
+            "$ref": "#/components/schemas/VersionOut"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "owner_id",
+          "owner_username",
+          "bank_id",
+          "archived",
+          "revision",
+          "access",
+          "available_for_reuse",
+          "derived_from",
+          "latest_version",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "LibraryQuestionOut"
+      },
+      "LibraryStatistics": {
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "title": "Question Id"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/VersionStatistics"
+            },
+            "type": "array",
+            "title": "Groups"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "question_id",
+          "groups"
+        ],
+        "title": "LibraryStatistics"
+      },
+      "LibraryUpdate": {
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Expected Revision"
+          },
+          "bank_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Id"
+          },
+          "archived": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_revision"
+        ],
+        "title": "LibraryUpdate"
       },
       "ManagementUpdate": {
         "properties": {
@@ -1451,11 +2819,6 @@
       },
       "Question-Input": {
         "properties": {
-          "id": {
-            "type": "string",
-            "pattern": "^[a-zA-Z0-9_-]{1,80}$",
-            "title": "Id"
-          },
           "type": {
             "type": "string",
             "enum": [
@@ -1494,25 +2857,35 @@
           "validation": {
             "$ref": "#/components/schemas/Validation-Input"
           },
-          "routing": {
-            "$ref": "#/components/schemas/Routing-Input"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "id",
-          "type"
-        ],
-        "title": "Question"
-      },
-      "Question-Output": {
-        "properties": {
           "id": {
             "type": "string",
             "pattern": "^[a-zA-Z0-9_-]{1,80}$",
             "title": "Id"
           },
+          "routing": {
+            "$ref": "#/components/schemas/Routing-Input"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuestionSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "id"
+        ],
+        "title": "Question"
+      },
+      "Question-Output": {
+        "properties": {
           "type": {
             "type": "string",
             "enum": [
@@ -1551,23 +2924,163 @@
           "validation": {
             "$ref": "#/components/schemas/Validation-Output"
           },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,80}$",
+            "title": "Id"
+          },
           "routing": {
             "$ref": "#/components/schemas/Routing-Output"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuestionSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,
         "type": "object",
         "required": [
-          "id",
           "type",
           "title",
           "description",
           "required",
           "options",
           "validation",
-          "routing"
+          "id",
+          "routing",
+          "source"
         ],
         "title": "Question"
+      },
+      "QuestionContent-Input": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "single_choice",
+              "multiple_choice",
+              "text",
+              "number"
+            ],
+            "title": "Type"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Title",
+            "default": ""
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Description",
+            "default": ""
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required",
+            "default": true
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/Option"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "title": "Options"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/Validation-Input"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "title": "QuestionContent"
+      },
+      "QuestionContent-Output": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "single_choice",
+              "multiple_choice",
+              "text",
+              "number"
+            ],
+            "title": "Type"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 500,
+            "title": "Title",
+            "default": ""
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Description",
+            "default": ""
+          },
+          "required": {
+            "type": "boolean",
+            "title": "Required",
+            "default": true
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/Option"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "title": "Options"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/Validation-Output"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "title",
+          "description",
+          "required",
+          "options",
+          "validation"
+        ],
+        "title": "QuestionContent"
+      },
+      "QuestionSource": {
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Question Id"
+          },
+          "version_id": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Version Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "question_id",
+          "version_id"
+        ],
+        "title": "QuestionSource"
       },
       "QuestionStatistic": {
         "properties": {
@@ -1836,6 +3349,31 @@
         ],
         "title": "ResponseOut"
       },
+      "RestoreInput": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{16,100}$",
+            "title": "Request Id"
+          },
+          "target_version_id": {
+            "type": "string",
+            "title": "Target Version Id"
+          },
+          "parent_version_id": {
+            "type": "string",
+            "title": "Parent Version Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request_id",
+          "target_version_id",
+          "parent_version_id"
+        ],
+        "title": "RestoreInput"
+      },
       "RevisionInput": {
         "properties": {
           "expected_revision": {
@@ -1930,6 +3468,69 @@
           "target"
         ],
         "title": "Rule"
+      },
+      "ShareInput": {
+        "properties": {
+          "expected_revision": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Expected Revision"
+          },
+          "username": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 3,
+            "title": "Username"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "expected_revision",
+          "username"
+        ],
+        "title": "ShareInput"
+      },
+      "SharedUser": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "username"
+        ],
+        "title": "SharedUser"
+      },
+      "SharesOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SharedUser"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "revision": {
+            "type": "integer",
+            "title": "Revision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "revision"
+        ],
+        "title": "SharesOut"
       },
       "Statistics": {
         "properties": {
@@ -2171,6 +3772,89 @@
         ],
         "title": "SurveySettings"
       },
+      "Usage": {
+        "properties": {
+          "survey_id": {
+            "type": "string",
+            "title": "Survey Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "slots": {
+            "items": {
+              "$ref": "#/components/schemas/UsageSlot"
+            },
+            "type": "array",
+            "title": "Slots"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "survey_id",
+          "title",
+          "status",
+          "slots"
+        ],
+        "title": "Usage"
+      },
+      "UsageList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Usage"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "UsageList"
+      },
+      "UsageSlot": {
+        "properties": {
+          "instance_id": {
+            "type": "string",
+            "title": "Instance Id"
+          },
+          "version_id": {
+            "type": "string",
+            "title": "Version Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "instance_id",
+          "version_id"
+        ],
+        "title": "UsageSlot"
+      },
       "UserMe": {
         "properties": {
           "id": {
@@ -2408,6 +4092,248 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "VersionCreate": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{16,100}$",
+            "title": "Request Id"
+          },
+          "parent_version_id": {
+            "type": "string",
+            "title": "Parent Version Id"
+          },
+          "content": {
+            "$ref": "#/components/schemas/QuestionContent-Input"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "request_id",
+          "parent_version_id",
+          "content"
+        ],
+        "title": "VersionCreate"
+      },
+      "VersionList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/VersionOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "VersionList"
+      },
+      "VersionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "question_id": {
+            "type": "string",
+            "title": "Question Id"
+          },
+          "version_no": {
+            "type": "integer",
+            "title": "Version No"
+          },
+          "parent_version_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Version Id"
+          },
+          "restored_from_version_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restored From Version Id"
+          },
+          "content": {
+            "$ref": "#/components/schemas/QuestionContent-Output"
+          },
+          "created_by": {
+            "type": "string",
+            "title": "Created By"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "question_id",
+          "version_no",
+          "parent_version_id",
+          "restored_from_version_id",
+          "content",
+          "created_by",
+          "created_at"
+        ],
+        "title": "VersionOut"
+      },
+      "VersionStatistics": {
+        "properties": {
+          "version": {
+            "$ref": "#/components/schemas/VersionOut"
+          },
+          "survey_count": {
+            "type": "integer",
+            "title": "Survey Count"
+          },
+          "response_count": {
+            "type": "integer",
+            "title": "Response Count"
+          },
+          "occurrence_count": {
+            "type": "integer",
+            "title": "Occurrence Count"
+          },
+          "reached_count": {
+            "type": "integer",
+            "title": "Reached Count"
+          },
+          "answered_count": {
+            "type": "integer",
+            "title": "Answered Count"
+          },
+          "skipped_count": {
+            "type": "integer",
+            "title": "Skipped Count"
+          },
+          "unanswered_count": {
+            "type": "integer",
+            "title": "Unanswered Count"
+          },
+          "average": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average"
+          },
+          "minimum": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minimum"
+          },
+          "maximum": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Maximum"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/OptionStatistic"
+            },
+            "type": "array",
+            "title": "Options"
+          },
+          "values": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerValue"
+            },
+            "type": "array",
+            "title": "Values"
+          },
+          "frequencies": {
+            "items": {
+              "$ref": "#/components/schemas/Frequency"
+            },
+            "type": "array",
+            "title": "Frequencies"
+          },
+          "frequency_total": {
+            "type": "integer",
+            "title": "Frequency Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "version",
+          "survey_count",
+          "response_count",
+          "occurrence_count",
+          "reached_count",
+          "answered_count",
+          "skipped_count",
+          "unanswered_count",
+          "average",
+          "minimum",
+          "maximum",
+          "options",
+          "values",
+          "frequencies",
+          "frequency_total",
+          "page",
+          "page_size"
+        ],
+        "title": "VersionStatistics"
       }
     }
   }

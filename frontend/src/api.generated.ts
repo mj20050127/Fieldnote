@@ -363,6 +363,215 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/question-banks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Banks */
+        get: operations["banks_api_question_banks_get"];
+        put?: never;
+        /** Create Bank */
+        post: operations["create_bank_api_question_banks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/question-banks/{bid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Bank */
+        patch: operations["update_bank_api_question_banks__bid__patch"];
+        trace?: never;
+    };
+    "/api/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Questions */
+        get: operations["questions_api_questions_get"];
+        put?: never;
+        /** Create Question */
+        post: operations["create_question_api_questions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/questions/{qid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Question */
+        get: operations["question_api_questions__qid__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Question */
+        patch: operations["update_question_api_questions__qid__patch"];
+        trace?: never;
+    };
+    "/api/questions/{qid}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Versions */
+        get: operations["versions_api_questions__qid__versions_get"];
+        put?: never;
+        /** Create Version */
+        post: operations["create_version_api_questions__qid__versions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/questions/{qid}/versions/{vid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Version */
+        get: operations["version_api_questions__qid__versions__vid__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/questions/{qid}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore */
+        post: operations["restore_api_questions__qid__restore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/questions/{qid}/fork": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Fork */
+        post: operations["fork_api_questions__qid__fork_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/questions/{qid}/shares": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Shares */
+        get: operations["shares_api_questions__qid__shares_get"];
+        put?: never;
+        /** Share */
+        post: operations["share_api_questions__qid__shares_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/questions/{qid}/shares/{uid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Revoke */
+        delete: operations["revoke_api_questions__qid__shares__uid__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/questions/{qid}/usages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Usages */
+        get: operations["usages_api_questions__qid__usages_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/questions/{qid}/statistics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cross Statistics */
+        get: operations["cross_statistics_api_questions__qid__statistics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -383,6 +592,58 @@ export interface components {
              * Format: date-time
              */
             submitted_at: string;
+        };
+        /** BankInput */
+        BankInput: {
+            /** Name */
+            name: string;
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+        };
+        /** BankList */
+        BankList: {
+            /** Items */
+            items: components["schemas"]["BankOut"][];
+        };
+        /** BankOut */
+        BankOut: {
+            /** Name */
+            name: string;
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /** Id */
+            id: string;
+            /** Archived */
+            archived: boolean;
+            /** Revision */
+            revision: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** BankUpdate */
+        BankUpdate: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Name */
+            name?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Archived */
+            archived?: boolean | null;
         };
         /** Credentials */
         Credentials: {
@@ -464,6 +725,16 @@ export interface components {
             /** Next Question Id */
             next_question_id: string;
         };
+        /** ForkInput */
+        ForkInput: {
+            /** Request Id */
+            request_id: string;
+            /** Bank Id */
+            bank_id: string;
+            content: components["schemas"]["QuestionContent-Input"];
+            /** Source Version Id */
+            source_version_id: string;
+        };
         /** FormOut */
         FormOut: {
             /**
@@ -496,6 +767,13 @@ export interface components {
              */
             already_submitted: boolean;
         };
+        /** Frequency */
+        Frequency: {
+            /** Value */
+            value: number;
+            /** Count */
+            count: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -511,6 +789,75 @@ export interface components {
             question_id: string | null;
             /** Field */
             field: string | null;
+        };
+        /** LibraryCreate */
+        LibraryCreate: {
+            /** Request Id */
+            request_id: string;
+            /** Bank Id */
+            bank_id: string;
+            content: components["schemas"]["QuestionContent-Input"];
+        };
+        /** LibraryQuestionList */
+        LibraryQuestionList: {
+            /** Items */
+            items: components["schemas"]["LibraryQuestionOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /** LibraryQuestionOut */
+        LibraryQuestionOut: {
+            /** Id */
+            id: string;
+            /** Owner Id */
+            owner_id: string;
+            /** Owner Username */
+            owner_username: string;
+            /** Bank Id */
+            bank_id: string;
+            /** Archived */
+            archived: boolean;
+            /** Revision */
+            revision: number;
+            /**
+             * Access
+             * @enum {string}
+             */
+            access: "owner" | "shared" | "historical";
+            /** Available For Reuse */
+            available_for_reuse: boolean;
+            derived_from: components["schemas"]["QuestionSource"] | null;
+            latest_version: components["schemas"]["VersionOut"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** LibraryStatistics */
+        LibraryStatistics: {
+            /** Question Id */
+            question_id: string;
+            /** Groups */
+            groups: components["schemas"]["VersionStatistics"][];
+        };
+        /** LibraryUpdate */
+        LibraryUpdate: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Bank Id */
+            bank_id?: string | null;
+            /** Archived */
+            archived?: boolean | null;
         };
         /** ManagementUpdate */
         ManagementUpdate: {
@@ -550,8 +897,6 @@ export interface components {
         };
         /** Question */
         "Question-Input": {
-            /** Id */
-            id: string;
             /**
              * Type
              * @enum {string}
@@ -575,12 +920,13 @@ export interface components {
             /** Options */
             options?: components["schemas"]["Option"][];
             validation?: components["schemas"]["Validation-Input"];
+            /** Id */
+            id: string;
             routing?: components["schemas"]["Routing-Input"];
+            source?: components["schemas"]["QuestionSource"] | null;
         };
         /** Question */
         "Question-Output": {
-            /** Id */
-            id: string;
             /**
              * Type
              * @enum {string}
@@ -604,7 +950,69 @@ export interface components {
             /** Options */
             options: components["schemas"]["Option"][];
             validation: components["schemas"]["Validation-Output"];
+            /** Id */
+            id: string;
             routing: components["schemas"]["Routing-Output"];
+            source: components["schemas"]["QuestionSource"] | null;
+        };
+        /** QuestionContent */
+        "QuestionContent-Input": {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "single_choice" | "multiple_choice" | "text" | "number";
+            /**
+             * Title
+             * @default
+             */
+            title: string;
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /**
+             * Required
+             * @default true
+             */
+            required: boolean;
+            /** Options */
+            options?: components["schemas"]["Option"][];
+            validation?: components["schemas"]["Validation-Input"];
+        };
+        /** QuestionContent */
+        "QuestionContent-Output": {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "single_choice" | "multiple_choice" | "text" | "number";
+            /**
+             * Title
+             * @default
+             */
+            title: string;
+            /**
+             * Description
+             * @default
+             */
+            description: string;
+            /**
+             * Required
+             * @default true
+             */
+            required: boolean;
+            /** Options */
+            options: components["schemas"]["Option"][];
+            validation: components["schemas"]["Validation-Output"];
+        };
+        /** QuestionSource */
+        QuestionSource: {
+            /** Question Id */
+            question_id: string;
+            /** Version Id */
+            version_id: string;
         };
         /** QuestionStatistic */
         QuestionStatistic: {
@@ -702,6 +1110,15 @@ export interface components {
              */
             submitted_at: string;
         };
+        /** RestoreInput */
+        RestoreInput: {
+            /** Request Id */
+            request_id: string;
+            /** Target Version Id */
+            target_version_id: string;
+            /** Parent Version Id */
+            parent_version_id: string;
+        };
         /** RevisionInput */
         RevisionInput: {
             /** Expected Revision */
@@ -738,6 +1155,27 @@ export interface components {
             value: unknown;
             /** Target */
             target: string;
+        };
+        /** ShareInput */
+        ShareInput: {
+            /** Expected Revision */
+            expected_revision: number;
+            /** Username */
+            username: string;
+        };
+        /** SharedUser */
+        SharedUser: {
+            /** Id */
+            id: string;
+            /** Username */
+            username: string;
+        };
+        /** SharesOut */
+        SharesOut: {
+            /** Items */
+            items: components["schemas"]["SharedUser"][];
+            /** Revision */
+            revision: number;
         };
         /** Statistics */
         Statistics: {
@@ -850,6 +1288,35 @@ export interface components {
              */
             allow_multiple: boolean;
         };
+        /** Usage */
+        Usage: {
+            /** Survey Id */
+            survey_id: string;
+            /** Title */
+            title: string;
+            /** Status */
+            status: string;
+            /** Slots */
+            slots: components["schemas"]["UsageSlot"][];
+        };
+        /** UsageList */
+        UsageList: {
+            /** Items */
+            items: components["schemas"]["Usage"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /** UsageSlot */
+        UsageSlot: {
+            /** Instance Id */
+            instance_id: string;
+            /** Version Id */
+            version_id: string;
+        };
         /** UserMe */
         UserMe: {
             /** Id */
@@ -907,6 +1374,82 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /** VersionCreate */
+        VersionCreate: {
+            /** Request Id */
+            request_id: string;
+            /** Parent Version Id */
+            parent_version_id: string;
+            content: components["schemas"]["QuestionContent-Input"];
+        };
+        /** VersionList */
+        VersionList: {
+            /** Items */
+            items: components["schemas"]["VersionOut"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /** VersionOut */
+        VersionOut: {
+            /** Id */
+            id: string;
+            /** Question Id */
+            question_id: string;
+            /** Version No */
+            version_no: number;
+            /** Parent Version Id */
+            parent_version_id: string | null;
+            /** Restored From Version Id */
+            restored_from_version_id: string | null;
+            content: components["schemas"]["QuestionContent-Output"];
+            /** Created By */
+            created_by: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** VersionStatistics */
+        VersionStatistics: {
+            version: components["schemas"]["VersionOut"];
+            /** Survey Count */
+            survey_count: number;
+            /** Response Count */
+            response_count: number;
+            /** Occurrence Count */
+            occurrence_count: number;
+            /** Reached Count */
+            reached_count: number;
+            /** Answered Count */
+            answered_count: number;
+            /** Skipped Count */
+            skipped_count: number;
+            /** Unanswered Count */
+            unanswered_count: number;
+            /** Average */
+            average: number | null;
+            /** Minimum */
+            minimum: number | null;
+            /** Maximum */
+            maximum: number | null;
+            /** Options */
+            options: components["schemas"]["OptionStatistic"][];
+            /** Values */
+            values: components["schemas"]["AnswerValue"][];
+            /** Frequencies */
+            frequencies: components["schemas"]["Frequency"][];
+            /** Frequency Total */
+            frequency_total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
         };
     };
     responses: never;
@@ -1605,6 +2148,584 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ResponseOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    banks_api_question_banks_get: {
+        parameters: {
+            query?: {
+                archived?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_bank_api_question_banks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BankInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_bank_api_question_banks__bid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BankUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    questions_api_questions_get: {
+        parameters: {
+            query?: {
+                scope?: "mine" | "shared" | "used";
+                bank_id?: string | null;
+                q?: string;
+                kind?: ("single_choice" | "multiple_choice" | "text" | "number") | null;
+                archived?: boolean;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryQuestionList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_question_api_questions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LibraryCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryQuestionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    question_api_questions__qid__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryQuestionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_question_api_questions__qid__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LibraryUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryQuestionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    versions_api_questions__qid__versions_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_version_api_questions__qid__versions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VersionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    version_api_questions__qid__versions__vid__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                qid: string;
+                vid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    restore_api_questions__qid__restore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RestoreInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    fork_api_questions__qid__fork_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ForkInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryQuestionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    shares_api_questions__qid__shares_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SharesOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    share_api_questions__qid__shares_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ShareInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SharesOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_api_questions__qid__shares__uid__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                qid: string;
+                uid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RevisionInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SharesOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    usages_api_questions__qid__usages_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsageList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cross_statistics_api_questions__qid__statistics_get: {
+        parameters: {
+            query?: {
+                version_id?: string | null;
+                survey_ids?: string[] | null;
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path: {
+                qid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryStatistics"];
                 };
             };
             /** @description Validation Error */

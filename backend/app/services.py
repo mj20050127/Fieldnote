@@ -7,6 +7,7 @@ from pymongo.errors import DuplicateKeyError
 
 from .errors import BusinessError
 from .logic import check_definition, evaluate
+from .library import validate_sources
 from .repositories import ResponseRepository, SurveyRepository, utcnow
 from .schemas import Definition, FormOut, SurveyOut
 
@@ -45,10 +46,11 @@ class SurveyService:
         self.db, self.repo = db, SurveyRepository(db)
 
     async def create(self, definition, user):
+        await validate_sources(self.db, definition, user)
         now = utcnow()
         survey = {**definition.model_dump(), '_id': uuid4().hex, 'owner_id': user['_id'],
                   'public_code': secrets.token_urlsafe(16), 'status': 'draft', 'deadline': None,
-                  'revision': 1, 'definition_version': 1, 'schema_version': 1,
+                  'revision': 1, 'definition_version': 1, 'schema_version': 2,
                   'created_at': now, 'updated_at': now}
         await self.db.surveys.insert_one(survey)
         return await survey_out(self.db, survey)
@@ -57,6 +59,9 @@ class SurveyService:
         survey = await self.repo.owned(survey_id, user['_id'])
         if survey['status'] != 'draft':
             raise BusinessError('DEFINITION_FROZEN', '已发布的问卷不能修改题目和填写设置', 409)
+        if survey['revision'] != data.expected_revision:
+            raise BusinessError('REVISION_CONFLICT', '问卷已被修改或状态已变化，请重新加载后再操作', 409)
+        await validate_sources(self.db, data, user, survey)
         values = data.model_dump(exclude={'expected_revision'})
         ids = [q['id'] for q in values['questions']]
         if len(set(ids)) != len(ids) or {'NEXT', 'END'} & set(ids):

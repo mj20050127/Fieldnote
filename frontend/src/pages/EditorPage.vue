@@ -26,6 +26,15 @@ import {
 import AppShell from "../components/AppShell.vue";
 import Icon from "../components/Icon.vue";
 import QuestionInput from "../components/QuestionInput.vue";
+import LibraryPicker from "../components/LibraryPicker.vue";
+import LibrarySaveDialog from "../components/LibrarySaveDialog.vue";
+import { api as libraryApi } from "../api";
+import {
+  applyVersion,
+  instanceOf,
+  type LibraryQuestion,
+  type Version,
+} from "../library";
 const route = useRoute(),
   router = useRouter(),
   id = String(route.params.id);
@@ -43,6 +52,46 @@ const q = computed(() =>
   survey.value?.questions.find((item) => item.id === selected.value),
 );
 const editable = computed(() => survey.value?.status === "draft");
+const contentEditable = computed(() => editable.value && !q.value?.source);
+const picker = ref(false),
+  librarySave = ref(false),
+  replaceVersion = ref(false),
+  sourceQuestion = ref<LibraryQuestion>();
+const sourceVersionNo = ref<number>();
+async function refreshSource() {
+  sourceQuestion.value = undefined;
+  sourceVersionNo.value = undefined;
+  const source = q.value?.source;
+  if (source) {
+    try {
+      const detail = await libraryApi<LibraryQuestion>(
+        "/questions/" + source.question_id,
+      );
+      const version = await libraryApi<Version>(
+        `/questions/${source.question_id}/versions/${source.version_id}`,
+      );
+      if (q.value?.source?.version_id === source.version_id) {
+        sourceQuestion.value = detail;
+        sourceVersionNo.value = version.version_no;
+      }
+    } catch {
+      /* Snapshot remains usable. */
+    }
+  }
+}
+function useLibraryVersion(version: Version) {
+  if (!survey.value || !editable.value) return;
+  if (replaceVersion.value && q.value) applyVersion(q.value, version);
+  else {
+    if (survey.value.questions.length >= 100) return;
+    const item = instanceOf(version);
+    survey.value.questions.push(item);
+    select(item.id);
+  }
+  checks.value = undefined;
+  refreshSource();
+  ElMessage.success("已加入本地草稿，请保存并检查跳转配置");
+}
 const dirty = computed(
   () =>
     !!survey.value &&
@@ -84,6 +133,7 @@ async function load() {
     survey.value = await api<Survey>(`/surveys/${id}`);
     snapshot.value = JSON.stringify(definitionOf(survey.value));
     selected.value = survey.value.questions[0]?.id || "";
+    await refreshSource();
   } catch (e) {
     error.value = (e as Error).message;
   }
@@ -92,6 +142,7 @@ function select(qid: string) {
   selected.value = qid;
   settingsTab.value = false;
   previewValue.value = null;
+  refreshSource();
 }
 function addQuestion(type: Question["type"]) {
   if (!survey.value || !editable.value) return;
@@ -117,6 +168,7 @@ function addQuestion(type: Question["type"]) {
       integer_only: false,
     },
     routing: { rules: [], default_target: "NEXT" },
+    source: null,
   };
   survey.value.questions.push(question);
   select(question.id);
@@ -404,6 +456,15 @@ onBeforeUnmount(() => window.removeEventListener("beforeunload", unload));
             ><Icon :name="typeIcons[question.type] || 'file'" :size="15" />
           </button>
           <div v-if="editable" class="add-questions">
+            <button
+              :disabled="survey.questions.length >= 100"
+              @click="
+                replaceVersion = false;
+                picker = true;
+              "
+            >
+              从题库添加
+            </button>
             <span>添加题目</span
             ><button
               v-for="(label, type) in typeLabels"
@@ -496,6 +557,54 @@ onBeforeUnmount(() => window.removeEventListener("beforeunload", unload));
               ><span>{{ typeLabels[q.type] }}</span>
             </div>
             <div class="question-edit-card">
+              <div class="library-source" v-if="q.source">
+                <RouterLink :to="'/library/questions/' + q.source.question_id"
+                  >题库来源 ·
+                  {{
+                    sourceVersionNo
+                      ? "v" + sourceVersionNo
+                      : q.source.version_id.slice(0, 8)
+                  }}
+                  →</RouterLink
+                >
+                <span v-if="sourceQuestion">{{
+                  sourceQuestion.latest_version.id === q.source.version_id
+                    ? "已使用最新可见版本"
+                    : "存在其他可选版本（最新 v" +
+                      sourceQuestion.latest_version.version_no +
+                      "）"
+                }}</span>
+                <p>题目内容固定于所选版本，跳转规则由本问卷单独设置。</p>
+                <div v-if="editable" class="button-row">
+                  <button
+                    class="text-button"
+                    :disabled="!sourceQuestion?.available_for_reuse"
+                    @click="
+                      replaceVersion = true;
+                      picker = true;
+                    "
+                  >
+                    更换版本</button
+                  ><button
+                    class="text-button"
+                    :disabled="!sourceQuestion?.available_for_reuse"
+                    @click="librarySave = true"
+                  >
+                    {{
+                      sourceQuestion?.access === "owner"
+                        ? "编辑并生成新版本"
+                        : "另存为我的题目"
+                    }}
+                  </button>
+                </div>
+              </div>
+              <button
+                v-else-if="editable"
+                class="text-button"
+                @click="librarySave = true"
+              >
+                保存到题库
+              </button>
               <div class="question-edit-toolbar">
                 <span class="type-pill"
                   ><Icon :name="typeIcons[q.type] || 'file'" :size="16" />{{
@@ -531,13 +640,13 @@ onBeforeUnmount(() => window.removeEventListener("beforeunload", unload));
                 class="question-title-input"
                 rows="2"
                 maxlength="500"
-                :disabled="!editable"
+                :disabled="!contentEditable"
                 placeholder="在这里写下你的问题…"
                 aria-label="题目标题"
               /><input
                 v-model="q.description"
                 class="question-description-input"
-                :disabled="!editable"
+                :disabled="!contentEditable"
                 maxlength="1000"
                 placeholder="添加说明（可选）"
                 aria-label="题目说明"
@@ -552,10 +661,10 @@ onBeforeUnmount(() => window.removeEventListener("beforeunload", unload));
                   ><input
                     v-model="option.text"
                     :aria-label="`选项 ${index + 1}`"
-                    :disabled="!editable"
+                    :disabled="!contentEditable"
                     maxlength="200"
                   /><button
-                    v-if="editable"
+                    v-if="contentEditable"
                     class="icon-button"
                     title="删除选项"
                     @click="q.options.splice(index, 1)"
@@ -564,7 +673,7 @@ onBeforeUnmount(() => window.removeEventListener("beforeunload", unload));
                   </button>
                 </div>
                 <button
-                  v-if="editable"
+                  v-if="contentEditable"
                   class="text-button"
                   :disabled="q.options.length >= 50"
                   @click="addOption"
@@ -595,7 +704,7 @@ onBeforeUnmount(() => window.removeEventListener("beforeunload", unload));
             ><div class="panel-title">题目设置</div>
             <div class="setting-toggle">
               <span>必答题</span
-              ><el-switch v-model="q.required" :disabled="!editable" />
+              ><el-switch v-model="q.required" :disabled="!contentEditable" />
             </div>
             <div class="config-section">
               <h3>回答限制</h3>
@@ -605,14 +714,14 @@ onBeforeUnmount(() => window.removeEventListener("beforeunload", unload));
                   v-model="q.validation.min_choices"
                   :min="0"
                   :max="q.options.length"
-                  :disabled="!editable"
+                  :disabled="!contentEditable"
                   controls-position="right"
                   placeholder="不限" /><label>最多选择</label
                 ><el-input-number
                   v-model="q.validation.max_choices"
                   :min="0"
                   :max="q.options.length"
-                  :disabled="!editable"
+                  :disabled="!contentEditable"
                   controls-position="right"
                   placeholder="不限" /></template
               ><template v-else-if="q.type === 'text'"
@@ -621,33 +730,33 @@ onBeforeUnmount(() => window.removeEventListener("beforeunload", unload));
                   v-model="q.validation.min_length"
                   :min="0"
                   :max="10000"
-                  :disabled="!editable"
+                  :disabled="!contentEditable"
                   controls-position="right"
                   placeholder="不限" /><label>最多字数</label
                 ><el-input-number
                   v-model="q.validation.max_length"
                   :min="0"
                   :max="10000"
-                  :disabled="!editable"
+                  :disabled="!contentEditable"
                   controls-position="right"
                   placeholder="不限" /></template
               ><template v-else-if="q.type === 'number'"
                 ><label>最小值</label
                 ><el-input-number
                   v-model="q.validation.min_value"
-                  :disabled="!editable"
+                  :disabled="!contentEditable"
                   controls-position="right"
                   placeholder="不限" /><label>最大值</label
                 ><el-input-number
                   v-model="q.validation.max_value"
-                  :disabled="!editable"
+                  :disabled="!contentEditable"
                   controls-position="right"
                   placeholder="不限" />
                 <div class="setting-toggle">
                   <span>仅允许整数</span
                   ><el-switch
                     v-model="q.validation.integer_only"
-                    :disabled="!editable"
+                    :disabled="!contentEditable"
                   /></div
               ></template>
               <p v-else class="muted small">填写者选择一个选项。</p>
@@ -806,5 +915,24 @@ onBeforeUnmount(() => window.removeEventListener("beforeunload", unload));
         </button></template
       ></el-dialog
     >
+    <LibraryPicker
+      v-model="picker"
+      :question-id="replaceVersion ? q?.source?.question_id : undefined"
+      @choose="useLibraryVersion"
+    />
+    <LibrarySaveDialog
+      v-if="q"
+      v-model="librarySave"
+      :initial="q"
+      :question-id="q.source?.question_id"
+      :parent="q.source?.version_id"
+      :fork="!!q.source && sourceQuestion?.access !== 'owner'"
+      @saved="
+        (version) => {
+          replaceVersion = true;
+          useLibraryVersion(version);
+        }
+      "
+    />
   </AppShell>
 </template>

@@ -47,15 +47,24 @@ class Routing(Model):
     default_target: str = Field(default='NEXT', max_length=80)
 
 
-class Question(Model):
-    id: str = Field(pattern=r'^[a-zA-Z0-9_-]{1,80}$')
+class QuestionContent(Model):
     type: Literal['single_choice', 'multiple_choice', 'text', 'number']
     title: str = Field(default='', max_length=500)
     description: str = Field(default='', max_length=1000)
     required: bool = True
     options: list[Option] = Field(default_factory=list, max_length=50)
     validation: Validation = Field(default_factory=Validation)
+
+
+class QuestionSource(Model):
+    question_id: str = Field(min_length=1, max_length=80)
+    version_id: str = Field(min_length=1, max_length=80)
+
+
+class Question(QuestionContent):
+    id: str = Field(pattern=r'^[a-zA-Z0-9_-]{1,80}$')
     routing: Routing = Field(default_factory=Routing)
+    source: QuestionSource | None = None
 
 
 class SurveySettings(Model):

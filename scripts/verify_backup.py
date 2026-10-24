@@ -23,7 +23,7 @@ def main():
     client = MongoClient(settings.mongo_uri, tz_aware=True)
     try:
         manifest = json.loads((args.backup / 'manifest.json').read_text(encoding='utf-8'))
-        counts = {name: client[target][name].count_documents({}) for name in ('users', 'surveys', 'responses')}
+        counts = {name: client[target][name].count_documents({}) for name in manifest['collections']}
         assert counts == {name: row['count'] for name, row in manifest['collections'].items()}
         with TestClient(create_app(Settings(mongo_database=target, app_env='test'))) as http:
             assert http.get('/api/health').status_code == 200

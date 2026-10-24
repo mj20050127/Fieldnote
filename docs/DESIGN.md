@@ -75,7 +75,31 @@ flowchart LR
 
 会话令牌用安全随机数生成，Cookie 为 HttpOnly、SameSite=Lax，生产启用 Secure；服务端主动检查过期并支持注销。写操作检查 CSRF，存在 Origin 时校验允许来源。注册和登录每 IP 每分钟最多 20 次，限流是单进程临时状态，生产默认单 worker；未来多实例需共享限流。所有管理读取和更新按 owner_id 过滤。匿名输出采用字段白名单，不返回 respondent_id、请求 ID 或摘要；用户自己写入文本的身份内容不自动脱敏。
 
-schema_version 表示存储结构，definition_version 表示答卷对应定义，revision 表示并发修改版本。第一阶段定义版本固定为 1，发布后不可修改。第二阶段如需已发布问卷编辑，再增加不可变的定义历史集合，先迁移已有版本 1，再让新答卷引用新版本；保留第一阶段服务和规则入口，并运行全部回归测试。第一阶段没有预建空的插件体系或多版本 UI。
+schema_version 表示存储结构，definition_version 表示答卷对应问卷定义，revision 表示并发修改版本。第二阶段增加题目版本，仍不允许编辑已发布的问卷；definition_version 继续保持原语义。题库版本号和问卷定义版本不是同一层级。
+
+## 第二阶段：题库、版本、权限与快照
+
+保留原四个集合，新增 question_banks（个人分组）、questions（逻辑题目）、question_versions（不可变内容）。版本独立保存，避免题目历史无限嵌入一个文档。共享名单最多 100 个用户；题库不嵌入题目 ID 数组。完整 MongoDB validator 和索引的可执行实现仍在 backend/app/database.py。
+
+question_banks 保存 owner_id、name、description、archived、revision 和时间。questions 保存 owner_id、bank_id、shared_with、status、archived、version_counter、revision、derived_from、creation_hash 和时间。status=creating 的未完成题目不显示，v1 成功插入后才激活为 active。
+
+question_versions 保存 question_id、version_no、parent_version_id、restored_from_version_id、content、created_by、request_id、payload_hash 和 created_at。content 仅有 type、title、description、required、options、validation，不含 routing。所有保存使用 POST 新增，API 没有覆盖或删除版本的入口。恢复也新增版本；从同一父版本保存可以产生分支。
+
+新增唯一索引 (question_id, version_no)、(created_by, request_id)，以及所有者题库索引、题目归属索引、shared_with 索引和 surveys(owner_id, questions.source.question_id) 反向引用索引。原有索引保留。
+
+问卷题目保留 id（本问卷的题位身份），另外可选 source={question_id, version_id}。题干、选项、校验与跳转依然完整嵌入问卷，填写不依赖题库查询。重复加入相同版本时分配不同题位，答案和跳转仍使用题位 ID。从题库导入默认 NEXT；草稿换版保留题位与原跳转，校验失败必须修复后才能发布。发布和关闭后的定义不提供换版。
+
+保存来源时，后端逐字段核对不可变版本内容，拒绝伪造或修改后继续声明旧来源。已存在的同题位同来源快照可在撤销授权或归档后继续保存；新增题位、更换版本、另存新题需要当前有效授权。不能通过删除 source 字段修改原引用，可删除原题位后创建新的独立题位。
+
+共享按规范化用户名解析为用户 ID，授权整个逻辑题目及后续版本，只授使用权。另存题归接收者，derived_from 记录原题及版本。题目与题库归档均保留版本和历史问卷。撤销共享后，历史使用者只能读取自己问卷已经引用的版本；详情、历史列表、统计均不能泄露未被其引用的私有新版。
+
+版本号通过单文档 $inc 分配，再插入唯一版本。失败可留下号段空缺，最新版本按成功插入的最大 version_no 查询。请求编号与规范化内容摘要确保相同请求重试返回相同版本；同编号不同内容冲突。首次创建的题目、版本 ID 由用户和请求编号确定，允许 creating 状态中断恢复。不依赖跨文档事务。这里不承诺跨集合归档操作的严格线性化，也不进行多实例吞吐量推算。
+
+跨卷查询先按当前用户 owner_id 过滤问卷，再将对应题位映射到每个不可变版本，最后对本人答卷聚合。选项统计分母为有效作答次数；数字给出有效数、均值、极值、频次分布，原始值与频次分页。答卷份数与题位机会、有效作答次数分开；未到达=题位机会-到达，到达未答=到达-有效作答。不同版本分别返回，不自动合并不同单位或选项含义。
+
+迁移为每个旧问卷题位创建独立、确定性的题目和 v1，不按相同文本合并。只增补 source 并递增 revision、升级 schema_version=2，原有题目、路由、分享码、definition_version、答案、路径、请求编号和摘要不改写。备份 v2 增加三个题库集合，恢复继续接受 v1，sessions 仍不进入备份。
+
+设计参考：[MongoDB 文档版本模式](https://www.mongodb.com/docs/manual/data-modeling/design-patterns/data-versioning/document-versioning/)、[单文档原子性](https://www.mongodb.com/docs/manual/core/write-operations-atomicity/)、[事务部署条件](https://www.mongodb.com/docs/manual/core/transactions-production-consideration/)。
 
 ## 参考资料
 

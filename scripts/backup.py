@@ -13,7 +13,9 @@ from pymongo import MongoClient
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from backend.app.config import Settings
 
-COLLECTIONS = ('users', 'surveys', 'responses')
+FORMATS = {1: ('users', 'surveys', 'responses'),
+           2: ('users', 'surveys', 'responses', 'question_banks', 'questions', 'question_versions')}
+COLLECTIONS = FORMATS[2]
 
 
 def main():
@@ -32,13 +34,14 @@ def main():
             if target.list_collection_names():
                 parser.error('Restore target is not empty. Use a new database name.')
             manifest = json.loads((args.restore / 'manifest.json').read_text(encoding='utf-8'))
-            if manifest.get('format_version') != 1:
+            collections = FORMATS.get(manifest.get('format_version'))
+            if not collections or set(manifest['collections']) != set(collections):
                 parser.error('Unsupported backup format.')
-            for name in COLLECTIONS:
+            for name in collections:
                 source = args.restore / f'{name}.jsonl.gz'
                 if hashlib.sha256(source.read_bytes()).hexdigest() != manifest['collections'][name]['sha256']:
                     parser.error(f'Backup checksum mismatch: {name}')
-            for name in COLLECTIONS:
+            for name in collections:
                 rows = []
                 count = 0
                 with gzip.open(args.restore / f'{name}.jsonl.gz', 'rt', encoding='utf-8') as stream:
@@ -60,7 +63,7 @@ def main():
             output = args.output or Path('.local/backups') / stamp
             output.mkdir(parents=True, exist_ok=False)
             db = client[settings.mongo_database]
-            manifest = {'format_version': 1, 'created_at': stamp, 'collections': {}}
+            manifest = {'format_version': 2, 'created_at': stamp, 'collections': {}}
             for name in COLLECTIONS:
                 destination = output / f'{name}.jsonl.gz'
                 count = 0

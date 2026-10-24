@@ -1,0 +1,12 @@
+{
+  "counts": {
+    "users": 6,
+    "surveys": 9,
+    "responses": 6,
+    "question_banks": 6,
+    "questions": 36,
+    "question_versions": 36
+  },
+  "original_snapshots_unchanged": true,
+  "response_documents_unchanged": true
+}

@@ -22,6 +22,7 @@ from .database import initialize_database
 from .errors import BusinessError
 from .examples import soccer_definition
 from .logic import check_definition, evaluate
+from .library_routes import router as library_router
 from .middleware import BodyLimitMiddleware
 from .repositories import ResponseRepository, SurveyRepository, utcnow
 from .schemas import (Credentials, Definition, DefinitionCheck, DraftUpdate, EvaluateInput,
@@ -49,7 +50,7 @@ def create_app(settings: Settings | None = None):
         finally:
             await client.close()
 
-    app = FastAPI(title='Fieldnote 问卷 API', version='1.0.0', lifespan=lifespan,
+    app = FastAPI(title='Fieldnote 问卷 API', version='2.0.0', lifespan=lifespan,
                   docs_url='/api/docs', openapi_url='/api/openapi.json', redoc_url=None)
     app.state.settings = settings
     attempts = defaultdict(deque)
@@ -296,6 +297,8 @@ def create_app(settings: Settings | None = None):
         if not doc:
             raise BusinessError('NOT_FOUND', '答卷不存在', 404)
         return await response_out(db, doc)
+
+    app.include_router(library_router)
 
     @app.get('/api/{rest:path}', include_in_schema=False)
     async def unknown_api(rest: str):

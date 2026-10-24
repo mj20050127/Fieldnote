@@ -18,6 +18,14 @@ async def initialize_database(db):
                        'request_id': 'string', 'payload_hash': 'string', 'submitted_at': 'date'}, []),
         'sessions': ({'_id': 'string', 'user_id': 'string', 'csrf_token': 'string',
                       'expires_at': 'date', 'created_at': 'date'}, []),
+        'question_banks': ({'_id': 'string', 'owner_id': 'string', 'name': 'string', 'description': 'string',
+                            'archived': 'bool', 'revision': 'int', 'created_at': 'date', 'updated_at': 'date'}, []),
+        'questions': ({'_id': 'string', 'owner_id': 'string', 'bank_id': 'string', 'shared_with': 'array',
+                       'version_counter': 'int', 'revision': 'int', 'archived': 'bool', 'creation_hash': 'string',
+                       'created_at': 'date', 'updated_at': 'date'}, ['status']),
+        'question_versions': ({'_id': 'string', 'question_id': 'string', 'version_no': 'int', 'content': 'object',
+                               'created_by': 'string', 'request_id': 'string', 'payload_hash': 'string',
+                               'created_at': 'date'}, ['parent_version_id', 'restored_from_version_id']),
     }
     existing = await db.list_collection_names()
     for name, (fields, additional) in specifications.items():
@@ -42,6 +50,8 @@ async def initialize_database(db):
                             'bsonType': 'object', 'required': ['id', 'text'], 'properties': {
                                 'id': {'bsonType': 'string'}, 'text': {'bsonType': 'string', 'maxLength': 200}}}},
                         'validation': {'bsonType': 'object'},
+                        'source': {'bsonType': ['object', 'null'], 'required': ['question_id', 'version_id'],
+                                   'properties': {'question_id': {'bsonType': 'string'}, 'version_id': {'bsonType': 'string'}}},
                         'routing': {'bsonType': 'object', 'required': ['rules', 'default_target'], 'properties': {
                             'default_target': {'bsonType': 'string'},
                             'rules': {'bsonType': 'array', 'maxItems': 20, 'items': {
@@ -49,6 +59,22 @@ async def initialize_database(db):
                                     'operator': {'enum': ['eq', 'contains_any', 'contains_all', 'gt', 'gte', 'lt', 'lte']},
                                     'target': {'bsonType': 'string'}}}}}},
                     }}}
+        if name == 'questions':
+            properties['status'] = {'enum': ['creating', 'active']}
+            properties['shared_with'] = {'bsonType': 'array', 'maxItems': 100, 'uniqueItems': True,
+                                         'items': {'bsonType': 'string'}}
+            properties['derived_from'] = {'bsonType': ['object', 'null']}
+        if name == 'question_versions':
+            for key in ['parent_version_id', 'restored_from_version_id']:
+                properties[key] = {'bsonType': ['string', 'null']}
+            properties['version_no']['minimum'] = 1
+            properties['content'] = {'bsonType': 'object',
+                'required': ['type', 'title', 'description', 'required', 'options', 'validation'],
+                'additionalProperties': False, 'properties': {
+                    'type': {'enum': ['single_choice', 'multiple_choice', 'text', 'number']},
+                    'title': {'bsonType': 'string', 'minLength': 1, 'maxLength': 500},
+                    'description': {'bsonType': 'string', 'maxLength': 1000}, 'required': {'bsonType': 'bool'},
+                    'options': {'bsonType': 'array', 'maxItems': 50}, 'validation': {'bsonType': 'object'}}}
         if name == 'responses':
             properties['answers'] = {'bsonType': 'array', 'maxItems': 100,
                                      'items': {'bsonType': 'object', 'required': ['question_id', 'value'],
@@ -72,4 +98,12 @@ async def initialize_database(db):
                                     unique=True, partialFilterExpression={'single_submission': True},
                                     name='single_submission_per_user')
     await db.sessions.create_index('expires_at', expireAfterSeconds=0, name='expired_sessions')
+    await db.question_banks.create_index([('owner_id', ASCENDING), ('archived', ASCENDING)], name='owner_banks')
+    await db.questions.create_index([('owner_id', ASCENDING), ('bank_id', ASCENDING), ('archived', ASCENDING)], name='owner_questions')
+    await db.questions.create_index('shared_with', name='shared_questions')
+    await db.question_versions.create_index([('question_id', ASCENDING), ('version_no', DESCENDING)],
+                                             unique=True, name='unique_question_version')
+    await db.question_versions.create_index([('created_by', ASCENDING), ('request_id', ASCENDING)],
+                                             unique=True, name='unique_version_request')
+    await db.surveys.create_index([('owner_id', ASCENDING), ('questions.source.question_id', ASCENDING)], name='question_usages')
 
